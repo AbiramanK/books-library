@@ -1,91 +1,159 @@
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from './page.module.css'
+"use client";
 
-const inter = Inter({ subsets: ['latin'] })
+import { Grid, Container, colors, Button } from "@mui/material";
+
+import styles from "./page.module.css";
+import { LeftPanel, SearchResult, TopPanel } from "@components/index";
+import { ArrowLeft, ArrowRight } from "@mui/icons-material";
+import { GridColDef } from "@mui/x-data-grid";
+
+const trendingSubjects = [
+  "Javascript",
+  "Harry Potter",
+  "Indian History",
+  "Crypto Currency",
+  "Criminal Law",
+];
+
+const columns: GridColDef[] = [
+  { field: "title", headerName: "Title and Sub Title", width: 250 },
+  { field: "author", headerName: "Author", width: 150 },
+  { field: "lastPublishYear", headerName: "Last Publish Year", width: 150 },
+  { field: "firstPublishYear", headerName: "First Publish Year", width: 150 },
+];
+
+const rows = [
+  {
+    id: 1,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+  {
+    id: 2,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+  {
+    id: 3,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+  {
+    id: 4,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+  {
+    id: 5,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+  {
+    id: 6,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+  {
+    id: 7,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+  {
+    id: 8,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+  {
+    id: 9,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+  {
+    id: 10,
+    title: "Javascript The Definitive Guide",
+    author: "David Flanagan",
+    lastPublishYear: "2020",
+    firstPublishYear: "1996",
+  },
+];
 
 export default function Home() {
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+      <Grid container spacing={0}>
+        <Grid
+          item
+          xs={2}
+          sx={{
+            height: "100vh",
+            borderRightStyle: "solid",
+            borderRightWidth: 1,
+            borderRightColor: colors.grey,
+          }}
         >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+          <LeftPanel trendingSubjects={trendingSubjects} />
+        </Grid>
+        <Grid item xs={10}>
+          <Grid container spacing={0}>
+            <Grid item xs={12}>
+              <TopPanel />
+            </Grid>
+            <Grid item xs={12}>
+              <SearchResult
+                rows={rows}
+                columns={columns}
+                disableSelectionOnClick={true}
+                newEditingApi={true}
+                pageSize={10}
+                rowsPerPageOptions={[10]}
+                tableHeight={380}
+              />
+              <Container
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  marginTop: 2,
+                  marginBottom: 2,
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  startIcon={<ArrowLeft fontSize="large" />}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outlined"
+                  endIcon={<ArrowRight fontSize="large" />}
+                  sx={{ marginLeft: 3 }}
+                >
+                  Next
+                </Button>
+              </Container>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
     </main>
-  )
+  );
 }
