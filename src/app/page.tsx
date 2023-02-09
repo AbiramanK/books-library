@@ -1,13 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
-import { Grid, Container, colors, Button, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Grid } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import axios from "axios";
-import { ArrowLeft, ArrowRight } from "@mui/icons-material";
-
-import styles from "./page.module.css";
-import { LeftPanel, SearchResult, TopPanel } from "@/components";
+import { PaginationComponent, SearchResult, TopPanel } from "@/components";
 import {
   OPEN_LIBRARY_API,
   OPEN_LIBRARY_FIELDS,
@@ -171,74 +168,33 @@ export default function Home() {
   };
 
   return (
-    <main className={styles.main}>
+    <React.Fragment>
       <Grid container spacing={0}>
-        <Grid
-          item
-          xs={2}
-          sx={{
-            height: "100vh",
-            borderRightStyle: "solid",
-            borderRightWidth: 1,
-            borderRightColor: colors.grey,
-          }}
-        >
-          <LeftPanel trendingSubjects={trendingSubjects} />
+        <Grid item xs={12}>
+          <TopPanel searchBooks={searchBooks} />
         </Grid>
-        <Grid item xs={10}>
-          <Grid container spacing={0}>
-            <Grid item xs={12}>
-              <TopPanel searchBooks={searchBooks} />
-            </Grid>
-            <Grid item xs={12}>
-              <SearchResult
-                columns={columns}
-                rows={searchResultDocs ?? []}
-                disableSelectionOnClick={true}
-                newEditingApi={true}
-                pageSize={10}
-                rowsPerPageOptions={[10]}
-                tableHeight={380}
-                loading={loading}
-              />
-              <Container
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  marginTop: 2,
-                  marginBottom: 2,
-                }}
-              >
-                <Button
-                  variant="outlined"
-                  startIcon={<ArrowLeft fontSize="large" />}
-                  sx={{ marginRight: 2 }}
-                  disabled={page == 1}
-                  onClick={() => previousPage()}
-                >
-                  Previous
-                </Button>
-                {searchResult && (
-                  <Typography variant="body2">{`${searchResult?.start!} - ${
-                    searchResult?.start! + searchResult?.docs?.length!
-                  } of ${searchResult?.numFound}`}</Typography>
-                )}
-                <Button
-                  variant="outlined"
-                  endIcon={<ArrowRight fontSize="large" />}
-                  sx={{ marginLeft: 2 }}
-                  disabled={lastPage || !searchResult}
-                  onClick={() => nextPage()}
-                >
-                  Next
-                </Button>
-              </Container>
-            </Grid>
-          </Grid>
+        <Grid item xs={12}>
+          <SearchResult
+            columns={columns}
+            rows={searchResultDocs ?? []}
+            disableSelectionOnClick={true}
+            newEditingApi={true}
+            pageSize={10}
+            rowsPerPageOptions={[10]}
+            tableHeight={380}
+            loading={loading}
+          />
+          <PaginationComponent
+            startPage={searchResult?.start!}
+            endPage={searchResult?.start! + searchResult?.docs?.length!}
+            totalPage={searchResult?.numFound!}
+            nextPage={nextPage}
+            previousPage={previousPage}
+            nextButtonDisabled={lastPage || !searchResult}
+            previousButtonDisabled={page == 1}
+          />
         </Grid>
       </Grid>
-    </main>
+    </React.Fragment>
   );
 }
