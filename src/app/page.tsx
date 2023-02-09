@@ -1,11 +1,18 @@
 "use client";
-
-import { Grid, Container, colors, Button } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Grid, Container, colors, Button, Typography } from "@mui/material";
+import { useSnackbar } from "notistack";
+import { GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import axios from "axios";
+import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 
 import styles from "./page.module.css";
-import { LeftPanel, SearchResult, TopPanel } from "@components/index";
-import { ArrowLeft, ArrowRight } from "@mui/icons-material";
-import { GridColDef } from "@mui/x-data-grid";
+import { LeftPanel, SearchResult, TopPanel } from "@/components";
+import {
+  OPEN_LIBRARY_API,
+  OPEN_LIBRARY_FIELDS,
+  OPEN_LIBRARY_LIMIT,
+} from "@/configs";
 
 const trendingSubjects = [
   "Javascript",
@@ -16,86 +23,153 @@ const trendingSubjects = [
 ];
 
 const columns: GridColDef[] = [
-  { field: "title", headerName: "Title and Sub Title", width: 250 },
-  { field: "author", headerName: "Author", width: 150 },
-  { field: "lastPublishYear", headerName: "Last Publish Year", width: 150 },
-  { field: "firstPublishYear", headerName: "First Publish Year", width: 150 },
+  {
+    field: "title",
+    headerName: "Title and Sub Title",
+    width: 250,
+    valueGetter: (params: GridValueGetterParams) =>
+      `${params?.row?.title ?? "-"}`,
+  },
+  {
+    field: "author_name",
+    headerName: "Author",
+    width: 150,
+    valueGetter: (params: GridValueGetterParams) =>
+      `${params?.row?.author_name?.[0] ?? "-"}`,
+  },
+  {
+    field: "publish_year",
+    headerName: "Last Publish Year",
+    width: 150,
+    valueGetter: (params: GridValueGetterParams) =>
+      `${params?.row?.publish_year !== 0 ? params?.row?.publish_year : "-"}`,
+  },
+  {
+    field: "first_publish_year",
+    headerName: "First Publish Year",
+    width: 150,
+    valueGetter: (params: GridValueGetterParams) =>
+      `${params?.row?.first_publish_year ?? "-"}`,
+  },
 ];
 
-const rows = [
-  {
-    id: 1,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-  {
-    id: 2,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-  {
-    id: 3,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-  {
-    id: 4,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-  {
-    id: 5,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-  {
-    id: 6,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-  {
-    id: 7,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-  {
-    id: 8,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-  {
-    id: 9,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-  {
-    id: 10,
-    title: "Javascript The Definitive Guide",
-    author: "David Flanagan",
-    lastPublishYear: "2020",
-    firstPublishYear: "1996",
-  },
-];
+const rows: any[] = [];
+
+export interface SearchResultDocsInterface {
+  title: string;
+  publish_year: Array<number>;
+  first_publish_year: number;
+  author_name: Array<string>;
+}
+
+export interface SearchResultDocsAPIInterface
+  extends SearchResultDocsInterface {
+  key: string;
+}
+export interface SearchResultDocsTableInterface
+  extends Omit<SearchResultDocsInterface, "publish_year"> {
+  id: string;
+  publish_year: number;
+}
+export interface SearchResultInterface {
+  numFound: number;
+  start: number;
+  numFoundExact: boolean;
+  docs: SearchResultDocsAPIInterface[];
+  num_found: number;
+  q: string;
+  offset: any;
+}
 
 export default function Home() {
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [searchResult, setSearchResult] = useState<SearchResultInterface>();
+  const [searchResultDocs, setSearchResultDocs] =
+    useState<SearchResultDocsTableInterface[]>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [searchText, setSearchText] = useState<string>("");
+  const [lastPage, setLastPage] = useState<boolean>(false);
+
+  useEffect(() => {
+    const totalPages =
+      (page - 1) * parseInt(OPEN_LIBRARY_LIMIT!) + searchResultDocs?.length!;
+    if (totalPages === searchResult?.numFound!) {
+      setLastPage(true);
+    } else {
+      if (lastPage) {
+        setLastPage(false);
+      }
+    }
+  }, [searchResultDocs]);
+
+  const searchBooks = async (search: string, currentPage?: number) => {
+    setSearchText(search);
+    try {
+      if (!currentPage && page != 1) {
+        setPage(1);
+        currentPage = 1;
+      }
+
+      setLoading(true);
+      const {
+        data,
+        status,
+        statusText,
+      }: { data: SearchResultInterface; status: number; statusText: string } =
+        await axios.get(`${OPEN_LIBRARY_API}/search.json`, {
+          params: {
+            q: search,
+            limit: OPEN_LIBRARY_LIMIT,
+            page: currentPage ?? page,
+            fields: OPEN_LIBRARY_FIELDS,
+          },
+        });
+
+      setLoading(false);
+      if (status === 200) {
+        setSearchResult(data);
+        const docs: SearchResultDocsTableInterface[] = data?.docs?.map(
+          ({ key: id, publish_year, ...rest }) => {
+            const lastPublishYear = Math?.max(...(publish_year ?? [0]));
+            return {
+              id,
+              publish_year: lastPublishYear,
+              ...rest,
+            };
+          }
+        );
+
+        setSearchResultDocs(docs);
+      } else {
+        enqueueSnackbar("Something went wrong", { variant: "error" });
+      }
+    } catch (error: any) {
+      setLoading(false);
+      console.error("Search Books requeest: ", error?.message);
+      enqueueSnackbar(error?.message, { variant: "error" });
+    }
+  };
+
+  const nextPage = () => {
+    const total: number = searchResult?.numFound!;
+
+    if (page * parseInt(OPEN_LIBRARY_LIMIT!) < total) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      searchBooks(searchText, nextPage);
+    }
+  };
+
+  const previousPage = () => {
+    if (page > 1) {
+      const previousPage: number = page - 1;
+      setPage(previousPage);
+      searchBooks(searchText, previousPage);
+    }
+  };
+
   return (
     <main className={styles.main}>
       <Grid container spacing={0}>
@@ -114,17 +188,18 @@ export default function Home() {
         <Grid item xs={10}>
           <Grid container spacing={0}>
             <Grid item xs={12}>
-              <TopPanel />
+              <TopPanel searchBooks={searchBooks} />
             </Grid>
             <Grid item xs={12}>
               <SearchResult
-                rows={rows}
                 columns={columns}
+                rows={searchResultDocs ?? []}
                 disableSelectionOnClick={true}
                 newEditingApi={true}
                 pageSize={10}
                 rowsPerPageOptions={[10]}
                 tableHeight={380}
+                loading={loading}
               />
               <Container
                 sx={{
@@ -139,13 +214,23 @@ export default function Home() {
                 <Button
                   variant="outlined"
                   startIcon={<ArrowLeft fontSize="large" />}
+                  sx={{ marginRight: 2 }}
+                  disabled={page == 1}
+                  onClick={() => previousPage()}
                 >
                   Previous
                 </Button>
+                {searchResult && (
+                  <Typography variant="body2">{`${searchResult?.start!} - ${
+                    searchResult?.start! + searchResult?.docs?.length!
+                  } of ${searchResult?.numFound}`}</Typography>
+                )}
                 <Button
                   variant="outlined"
                   endIcon={<ArrowRight fontSize="large" />}
-                  sx={{ marginLeft: 3 }}
+                  sx={{ marginLeft: 2 }}
+                  disabled={lastPage || !searchResult}
+                  onClick={() => nextPage()}
                 >
                   Next
                 </Button>

@@ -10,6 +10,7 @@ interface ISearchResultProps {
   disableSelectionOnClick: boolean;
   newEditingApi: boolean;
   tableHeight: number;
+  loading: boolean;
 }
 
 export const SearchResult = (props: ISearchResultProps) => {
@@ -23,6 +24,8 @@ export const SearchResult = (props: ISearchResultProps) => {
           rowsPerPageOptions={props?.rowsPerPageOptions}
           disableSelectionOnClick={props?.disableSelectionOnClick}
           experimentalFeatures={{ newEditingApi: props?.newEditingApi }}
+          paginationMode={"client"}
+          loading={props?.loading}
         />
       </Box>
     </React.Fragment>

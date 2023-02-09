@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Search } from "@mui/icons-material";
 import {
   colors,
@@ -7,10 +7,27 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 
-interface ITopPanelProps {}
+interface ITopPanelProps {
+  searchBooks: Function;
+}
 
 export const TopPanel = (props: ITopPanelProps) => {
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [searchText, setSearchText] = useState("");
+
+  const searchBooks = () => {
+    if (searchText?.trim() !== "") {
+      props?.searchBooks(searchText);
+    } else {
+      enqueueSnackbar("Please enter search text!", {
+        variant: "info",
+      });
+    }
+  };
+
   return (
     <React.Fragment>
       <Container
@@ -29,12 +46,18 @@ export const TopPanel = (props: ITopPanelProps) => {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton>
+                <IconButton
+                  onClick={() => {
+                    searchBooks();
+                  }}
+                >
                   <Search />
                 </IconButton>
               </InputAdornment>
             ),
           }}
+          value={searchText}
+          onChange={(event) => setSearchText(event?.target?.value)}
         />
       </Container>
     </React.Fragment>
