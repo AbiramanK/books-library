@@ -58,6 +58,13 @@ export const TopPanel = (props: ITopPanelProps) => {
           }}
           value={searchText}
           onChange={(event) => setSearchText(event?.target?.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+
+              searchBooks();
+            }
+          }}
         />
       </Container>
     </React.Fragment>
