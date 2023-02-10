@@ -78,7 +78,6 @@ export default function Home() {
     useState<SearchResultDocsTableInterface[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [lastPage, setLastPage] = useState<boolean>(false);
 
   const searchBooks = async (search: string, currentPage?: number) => {
     setSearchText(search);
@@ -93,7 +92,6 @@ export default function Home() {
       const {
         data,
         status,
-        statusText,
       }: { data: SearchResultInterface; status: number; statusText: string } =
         await axios.get(`${OPEN_LIBRARY_API}/search.json`, {
           params: {
@@ -124,7 +122,7 @@ export default function Home() {
       }
     } catch (error: any) {
       setLoading(false);
-      console.error("Search Books requeest: ", error?.message);
+      console.error("Search Books request: ", error?.message);
       enqueueSnackbar(error?.message, { variant: "error" });
     }
   };

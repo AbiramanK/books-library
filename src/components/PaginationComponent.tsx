@@ -1,6 +1,6 @@
+import React from "react";
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 import { Button, Container, Typography } from "@mui/material";
-import React from "react";
 
 interface IPaginationComponentProps {
   previousButtonDisabled: boolean;
