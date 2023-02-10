@@ -12,6 +12,8 @@ import {
 } from "@/configs";
 import { GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 
+type SearchByType = "q" | "title" | "author";
+
 const columns: GridColDef[] = [
   {
     field: "title",
@@ -78,6 +80,7 @@ export default function Home() {
     useState<SearchResultDocsTableInterface[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
+  const [searchBy, setSearchBy] = useState<SearchByType>("q");
 
   const searchBooks = async (search: string, currentPage?: number) => {
     setSearchText(search);
@@ -89,17 +92,51 @@ export default function Home() {
       }
 
       setLoading(true);
+
+      const defaultParams = {
+        limit: OPEN_LIBRARY_LIMIT,
+        page: currentPage ?? page,
+        fields: OPEN_LIBRARY_FIELDS,
+      };
+
+      let params;
+
+      switch (searchBy) {
+        case "q":
+          params = {
+            ...defaultParams,
+            q: search,
+          };
+          break;
+
+        case "title":
+          params = {
+            ...defaultParams,
+            title: search,
+          };
+          break;
+
+        case "author":
+          params = {
+            ...defaultParams,
+            author: search,
+          };
+          break;
+
+        default:
+          params = {
+            ...defaultParams,
+            q: search,
+          };
+          break;
+      }
+
       const {
         data,
         status,
       }: { data: SearchResultInterface; status: number; statusText: string } =
         await axios.get(`${OPEN_LIBRARY_API}/search.json`, {
-          params: {
-            q: search,
-            limit: OPEN_LIBRARY_LIMIT,
-            page: currentPage ?? page,
-            fields: OPEN_LIBRARY_FIELDS,
-          },
+          params,
         });
 
       setLoading(false);
@@ -127,11 +164,18 @@ export default function Home() {
     }
   };
 
+  const handleSearchByChange = (searchBy: SearchByType) => {
+    setSearchBy(searchBy);
+  };
+
   return (
     <React.Fragment>
       <Grid container spacing={0}>
         <Grid item xs={12}>
-          <TopPanel searchBooks={searchBooks} />
+          <TopPanel
+            searchBooks={searchBooks}
+            handleSearchByChange={handleSearchByChange}
+          />
         </Grid>
         <Grid item xs={12}>
           <SearchResultDataGrid

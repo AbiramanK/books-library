@@ -3,20 +3,28 @@ import { Search } from "@mui/icons-material";
 import {
   colors,
   Container,
+  FormControl,
   IconButton,
   InputAdornment,
+  InputLabel,
+  MenuItem,
   TextField,
+  Select,
+  SelectChangeEvent,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 
+type SearchByType = "q" | "title" | "author";
 interface ITopPanelProps {
   searchBooks: Function;
+  handleSearchByChange: (searchBy: SearchByType) => void;
 }
 
 export const TopPanel = (props: ITopPanelProps) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [searchText, setSearchText] = useState("");
+  const [searchBy, setSearchBy] = useState<SearchByType>("q");
 
   const searchBooks = () => {
     if (searchText?.trim() !== "") {
@@ -26,6 +34,11 @@ export const TopPanel = (props: ITopPanelProps) => {
         variant: "info",
       });
     }
+  };
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setSearchBy(event.target.value as SearchByType);
+    props?.handleSearchByChange(event.target.value as SearchByType);
   };
 
   return (
@@ -39,6 +52,21 @@ export const TopPanel = (props: ITopPanelProps) => {
           borderBottomColor: colors.grey,
         }}
       >
+        <FormControl sx={{ width: 100 }}>
+          <InputLabel id="search-by-select-label">Search By</InputLabel>
+          <Select
+            labelId="search-by-select-label"
+            id="search-by-select"
+            value={searchBy}
+            label="SearchBy"
+            onChange={handleChange}
+            size={"small"}
+          >
+            <MenuItem value={"q"}>All</MenuItem>
+            <MenuItem value={"title"}>Title</MenuItem>
+            <MenuItem value={"author"}>Author</MenuItem>
+          </Select>
+        </FormControl>
         <TextField
           label={"Search Book by Title or By Author"}
           size={"small"}
