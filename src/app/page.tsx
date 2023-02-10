@@ -168,6 +168,14 @@ export default function Home() {
     setSearchBy(searchBy);
   };
 
+  const resetSearch = () => {
+    setSearchText("");
+    setSearchResult(undefined);
+    setSearchResultDocs(undefined);
+    setPage(1);
+    setSearchBy("q");
+  };
+
   return (
     <React.Fragment>
       <Grid container spacing={0}>
@@ -175,6 +183,7 @@ export default function Home() {
           <TopPanel
             searchBooks={searchBooks}
             handleSearchByChange={handleSearchByChange}
+            resetSearch={resetSearch}
           />
         </Grid>
         <Grid item xs={12}>

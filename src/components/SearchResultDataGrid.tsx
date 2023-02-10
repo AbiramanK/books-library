@@ -69,7 +69,7 @@ export const SearchResultDataGrid = (props: ISearchResultDataGridProps) => {
         nextPage={nextPage}
         previousPage={previousPage}
         nextButtonDisabled={lastPage || !props?.searchResultData}
-        previousButtonDisabled={page == 1}
+        previousButtonDisabled={page == 1 || !props?.searchResultData}
       />
     </React.Fragment>
   );
