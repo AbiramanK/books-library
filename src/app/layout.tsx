@@ -1,23 +1,73 @@
 "use client";
-import { LeftPanel } from "@/components";
+import React, { useEffect, useState } from "react";
 import { colors, Grid } from "@mui/material";
+import axios from "axios";
 import { SnackbarProvider } from "notistack";
+
+import { LeftPanel } from "@/components";
+import { OPEN_LIBRARY_API } from "@/configs";
 
 import "./globals.css";
 
-const trendingSubjects = [
-  "Javascript",
-  "Harry Potter",
-  "Indian History",
-  "Crypto Currency",
-  "Criminal Law",
-];
+export interface SubjectItemInterface {
+  name: string;
+  count: number;
+  url: string;
+}
+
+export interface SubjectLinksInterface {
+  self: string;
+  list: string;
+}
+
+export interface SubjectListInterface {
+  subjects: SubjectItemInterface[];
+  places: SubjectItemInterface[];
+  people: SubjectItemInterface[];
+  times: SubjectItemInterface[];
+  links: SubjectLinksInterface;
+}
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [subjects, setSubjects] = useState<SubjectItemInterface[]>();
+  const [trendingSubjects, setTrendingSubjects] =
+    useState<SubjectItemInterface[]>();
+
+  useEffect(() => {
+    getSubjects();
+  }, []);
+
+  const getSubjects = async () => {
+    try {
+      const { data, status }: { data: SubjectListInterface; status: number } =
+        await axios.get(
+          `${OPEN_LIBRARY_API}/people/george08/lists/OL97L/subjects.json`
+        );
+
+      if (status === 200) {
+        setSubjects(data?.subjects);
+        filterTrendingSubjects(data?.subjects);
+      } else {
+        alert("Something went wrong");
+      }
+    } catch (error: any) {
+      console.error(error?.message);
+      alert(error?.message);
+    }
+  };
+
+  const filterTrendingSubjects = (subjects: SubjectItemInterface[]) => {
+    const trending: SubjectItemInterface[] = subjects?.sort((a, b) =>
+      a.count < b.count ? 1 : b.count < a.count ? -1 : 0
+    );
+
+    setTrendingSubjects(trending?.slice(0, 5));
+  };
+
   return (
     <html lang="en">
       {/*
@@ -39,7 +89,10 @@ export default function RootLayout({
                   borderRightColor: colors.grey,
                 }}
               >
-                <LeftPanel trendingSubjects={trendingSubjects} />
+                <LeftPanel
+                  trendingSubjects={trendingSubjects}
+                  subjects={subjects}
+                />
               </Grid>
               <Grid item xs={10}>
                 {children}
