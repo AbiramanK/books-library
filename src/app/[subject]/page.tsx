@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { colors, Container, Grid, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import axios from "axios";
@@ -15,21 +15,21 @@ const columns: GridColDef[] = [
   {
     field: "title",
     headerName: "Title and Sub Title",
-    width: 250,
+    width: 350,
     valueGetter: (params: GridValueGetterParams) =>
       `${params?.row?.title ?? "-"}`,
   },
   {
     field: "authors",
     headerName: "Author",
-    width: 150,
+    width: 250,
     valueGetter: (params: GridValueGetterParams) =>
       `${params?.row?.authors?.[0]?.name! ?? "-"}`,
   },
   {
     field: "first_publish_year",
     headerName: "First Publish Year",
-    width: 150,
+    width: 200,
     valueGetter: (params: GridValueGetterParams) =>
       `${params?.row?.first_publish_year ?? "-"}`,
   },
@@ -60,14 +60,9 @@ export interface SearchResultInterface {
 }
 
 export default function Subject() {
-  const { query } = useRouter();
-  // const query: any = useSearchParams();
-  // console.log("query params: ", query);
-  const subject: string = "javascript";
-  // const subject: string = query?.subject!;
-  // const subject: string = Array.isArray(router?.query?.subject!)
-  //   ? router?.query?.subject?.[0]!
-  //   : router?.query?.subject!;
+  const pathName = usePathname();
+
+  const subject: string = pathName!?.split("/")?.[1]!;
 
   const { enqueueSnackbar } = useSnackbar();
 
