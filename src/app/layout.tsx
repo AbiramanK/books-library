@@ -1,13 +1,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { colors, Grid } from "@mui/material";
+import { colors, Grid, LinearProgress } from "@mui/material";
 import axios from "axios";
 import { SnackbarProvider } from "notistack";
+import dynamic from "next/dynamic";
 
-import { LeftPanel } from "@/components";
 import { OPEN_LIBRARY_API } from "@/configs";
-
 import "./globals.css";
+
+const LeftPanel = dynamic(
+  () =>
+    import("./../components/LeftPanel").then(
+      (component) => component?.LeftPanel
+    ),
+  {
+    loading: () => <LinearProgress />,
+  }
+);
 
 export interface SubjectItemInterface {
   name: string;
