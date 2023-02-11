@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { colors, Container, Grid, Typography } from "@mui/material";
+import { usePathname, useRouter } from "next/navigation";
+import { colors, Container, Grid, IconButton, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import axios from "axios";
+import { GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import { Home } from "@mui/icons-material";
 
 import { SearchResultDataGrid } from "@/components";
 import { OPEN_LIBRARY_API, OPEN_LIBRARY_LIMIT } from "@/configs";
-import { GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 
 const limit = parseInt(OPEN_LIBRARY_LIMIT!);
 const columns: GridColDef[] = [
@@ -60,6 +61,7 @@ export interface SearchResultInterface {
 }
 
 export default function Subject() {
+  const Router = useRouter();
   const pathName = usePathname();
 
   const subject: string = pathName!?.split("/")?.[1]!;
@@ -127,6 +129,10 @@ export default function Subject() {
     }
   };
 
+  const goToHome = () => {
+    Router.push("/");
+  };
+
   return (
     <React.Fragment>
       <Grid container spacing={0}>
@@ -140,7 +146,16 @@ export default function Subject() {
               borderBottomColor: colors.grey,
             }}
           >
-            <Typography variant="h4">{subject}</Typography>
+            <Grid container alignItems={"center"}>
+              <Grid item xs={11}>
+                <Typography variant="h4">{subject}</Typography>
+              </Grid>
+              <Grid item xs={1}>
+                <IconButton onClick={goToHome}>
+                  <Home fontSize="large" />
+                </IconButton>
+              </Grid>
+            </Grid>
           </Container>
         </Grid>
         <Grid item xs={12}>
