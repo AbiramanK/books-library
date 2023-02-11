@@ -30,6 +30,10 @@ export const SearchResultDataGrid = (props: ISearchResultDataGridProps) => {
         setLastPage(false);
       }
     }
+
+    if (!props?.searchResultData) {
+      setPage(1);
+    }
   }, [props?.searchResultData]);
 
   const nextPage = () => {

@@ -86,9 +86,10 @@ export default function Home() {
     setSearchText(search);
 
     try {
-      if (!currentPage && page != 1) {
+      if (!currentPage) {
         setPage(1);
         currentPage = 1;
+        setSearchResultDocs(undefined);
       }
 
       setLoading(true);
