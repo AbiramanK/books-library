@@ -45,6 +45,7 @@ export default function RootLayout({
   const [subjects, setSubjects] = useState<SubjectItemInterface[]>();
   const [trendingSubjects, setTrendingSubjects] =
     useState<SubjectItemInterface[]>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     getSubjects();
@@ -52,11 +53,13 @@ export default function RootLayout({
 
   const getSubjects = async () => {
     try {
+      setLoading(true);
       const { data, status }: { data: SubjectListInterface; status: number } =
         await axios.get(
           `${OPEN_LIBRARY_API}/people/george08/lists/OL97L/subjects.json`
         );
 
+      setLoading(false);
       if (status === 200) {
         setSubjects(data?.subjects);
         filterTrendingSubjects(data?.subjects);
@@ -64,6 +67,7 @@ export default function RootLayout({
         alert("Something went wrong");
       }
     } catch (error: any) {
+      setLoading(false);
       console.error(error?.message);
       alert(error?.message);
     }
@@ -101,6 +105,7 @@ export default function RootLayout({
                 <LeftPanel
                   trendingSubjects={trendingSubjects}
                   subjects={subjects}
+                  loading={loading}
                 />
               </Grid>
               <Grid item xs={10}>

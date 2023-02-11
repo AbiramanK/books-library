@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { ListSkeleton } from "./ListSkeleton";
 
 export interface SubjectItemInterface {
   name: string;
@@ -19,6 +20,7 @@ export interface SubjectItemInterface {
 interface ILeftPanelProps {
   trendingSubjects: SubjectItemInterface[] | undefined;
   subjects: SubjectItemInterface[] | undefined;
+  loading: boolean;
 }
 
 export const LeftPanel = (props: ILeftPanelProps) => {
@@ -66,12 +68,16 @@ export const LeftPanel = (props: ILeftPanelProps) => {
             />
           </Grid>
           <Grid item xs={12}>
+            {(props?.loading || !subjects) && <ListSkeleton length={5} />}
             <List>
-              {subjects?.map((subject, index) => {
+              {subjects?.map(({ name, url }, index) => {
                 return (
                   <ListItem key={index} disablePadding>
-                    <ListItemButton>
-                      <ListItemText primary={`${subject?.name}`} />
+                    <ListItemButton
+                      LinkComponent={"a"}
+                      href={`/${url?.split("/")?.[2]}`}
+                    >
+                      <ListItemText primary={`${name}`} />
                     </ListItemButton>
                   </ListItem>
                 );
