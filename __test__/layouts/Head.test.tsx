@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 
 import Head from "@/app/head";
 
-describe("Render app Head", () => {
+describe("Layout => App => Head", () => {
   beforeEach(() => render(<Head />));
 
   it("Should have title", () => {

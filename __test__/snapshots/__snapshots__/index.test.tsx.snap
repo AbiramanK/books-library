@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Snapshots App <Head /> should render title and description 1`] = `
+exports[`Snapshots Layout => App => <Head /> should render title and description 1`] = `
 [
   <title>
     Books Library
