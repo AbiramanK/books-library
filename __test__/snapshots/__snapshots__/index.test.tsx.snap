@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshots App <Head /> should render title and description 1`] = `
+[
+  <title>
+    Books Library
+  </title>,
+  <meta
+    content="width=device-width, initial-scale=1"
+    name="viewport"
+  />,
+  <meta
+    content="Books Library is a webapp that lists the books"
+    name="description"
+  />,
+  <link
+    href="/favicon.ico"
+    rel="icon"
+  />,
+]
+`;
