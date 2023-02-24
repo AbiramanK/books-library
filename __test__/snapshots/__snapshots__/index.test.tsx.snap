@@ -1,5 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Snapshots Component => <ListSkeliton /> should render 2 skeletons 1`] = `
+<ul
+  className="MuiList-root MuiList-padding css-h4y409-MuiList-root"
+>
+  <li
+    className="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
+    disabled={false}
+  >
+    <span
+      className="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-58ftfq-MuiSkeleton-root"
+      style={
+        {
+          "height": 40,
+          "width": 200,
+        }
+      }
+    />
+  </li>
+  <li
+    className="MuiListItem-root MuiListItem-gutters MuiListItem-padding css-1p823my-MuiListItem-root"
+    disabled={false}
+  >
+    <span
+      className="MuiSkeleton-root MuiSkeleton-rectangular MuiSkeleton-pulse css-58ftfq-MuiSkeleton-root"
+      style={
+        {
+          "height": 40,
+          "width": 200,
+        }
+      }
+    />
+  </li>
+</ul>
+`;
+
 exports[`Snapshots Layout => App => <Head /> should render title and description 1`] = `
 [
   <title>
